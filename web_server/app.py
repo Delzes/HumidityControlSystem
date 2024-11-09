@@ -12,9 +12,11 @@ current_humidity = 0
 humidity_threshold = 60
 
 def on_connect(client, userdata, flags, rc):
+    print(f"Connected with result code {rc}")
     client.subscribe(MQTT_TOPIC_HUMIDITY)
 
 def on_message(client, userdata, msg):
+    print(f"Message received: {msg.topic} {msg.payload}")
     global current_humidity
     current_humidity = int(msg.payload.decode())
 

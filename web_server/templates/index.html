@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1>Current Humidity: {{ humidity }}%</h1>
-    <h2>Current Threshold: {{ threshold }}%</h2>
+    <h2>Current Threshold: <span id="currentThreshold">{{ threshold }}</span>%</h2>
 
     <form id="thresholdForm">
         <label for="threshold">Set Humidity Threshold:</label>
@@ -18,13 +18,15 @@
         document.getElementById("thresholdForm").onsubmit = async function(e) {
             e.preventDefault();
             const threshold = document.getElementById("threshold").value;
+
             const response = await fetch('/update_threshold', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ threshold })
+                body: new URLSearchParams({ 'threshold': threshold }), // Используем URLSearchParams для формы
             });
             const data = await response.json();
+            //document.getElementById("currentThreshold").textContent = data.new_threshold;
             alert("Threshold updated to: " + data.new_threshold);
+            window.location.reload();
         }
     </script>
 </body>
