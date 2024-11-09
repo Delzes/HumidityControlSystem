@@ -5,7 +5,7 @@
     <title>Humidity Control</title>
 </head>
 <body>
-    <h1>Current Humidity: {{ humidity }}%</h1>
+    <h1>Current Humidity: <span id="currentHumidity">{{ humidity }}</span>%</h1>
     <h2>Current Threshold: <span id="currentThreshold">{{ threshold }}</span>%</h2>
 
     <form id="thresholdForm">
@@ -15,18 +15,30 @@
     </form>
 
     <script>
+        // обновление влажности с сервера
+        async function fetchHumidity() {
+            const response = await fetch('/get_humidity');
+            const data = await response.json();
+            document.getElementById("currentHumidity").textContent = data.humidity;
+        }
+
+        setInterval(fetchHumidity, 5000);  // Обновление влажности каждые 5 секунд
+
         document.getElementById("thresholdForm").onsubmit = async function(e) {
             e.preventDefault();
             const threshold = document.getElementById("threshold").value;
 
             const response = await fetch('/update_threshold', {
                 method: 'POST',
-                body: new URLSearchParams({ 'threshold': threshold }), // Используем URLSearchParams для формы
+                body: new URLSearchParams({ 'threshold': threshold }),
             });
+
             const data = await response.json();
-            //document.getElementById("currentThreshold").textContent = data.new_threshold;
-            alert("Threshold updated to: " + data.new_threshold);
-            window.location.reload();
+
+            if (data.status === 'success') {
+                alert("Threshold updated to: " + data.new_threshold);
+                document.getElementById("currentThreshold").textContent = data.new_threshold;
+            }
         }
     </script>
 </body>

@@ -37,5 +37,10 @@ def update_threshold():
     mqtt_client.publish(MQTT_TOPIC_SETTINGS, str(humidity_threshold))
     return jsonify({'status': 'success', 'new_threshold': humidity_threshold})
 
+@app.route('/get_humidity', methods=['GET'])
+def get_humidity():
+    return jsonify({'humidity': current_humidity})
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
