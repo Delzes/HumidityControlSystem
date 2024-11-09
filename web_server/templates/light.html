@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Влажность в помещении</a></li>
+            <li><a href="{{ url_for('light') }}">Освещенность</a></li>
+            <li><a href="{{ url_for('sprayer') }}">Влажность в почве</a></li>
+            <li><a href="#">Мониторинг температур</a></li>
+        </ul>
+    </nav>
+
+    <h1>Current Light Level: <span id="currentLight">{{ light }}</span> Lux</h1>
+    <h2>Current Threshold: <span id="currentLightThreshold">{{ light_threshold }}</span> Lux</h2>
+
+
+    <form id="lightThresholdForm">
+        <label for="light_threshold">Set Light Threshold:</label>
+        <input type="number" id="light_threshold" name="light_threshold" value="{{ light_threshold }}">
+        <button type="submit">Update Threshold</button>
+    </form>
+
+    <script>
+        async function fetchLight() {
+            const response = await fetch('/get_light');
+            const data = await response.json();
+            document.getElementById("currentLight").textContent = data.light;
+        }
+
+        setInterval(fetchLight, 5000);  // Обновление влажности каждые 5 секунд
+
+        document.getElementById("lightThresholdForm").onsubmit = async function(e) {
+            e.preventDefault();
+            const light_threshold = document.getElementById("light_threshold").value;
+
+            const response = await fetch('/update_light_threshold', {
+                method: 'POST',
+                body: new URLSearchParams({ 'light_threshold': light_threshold }),
+            });
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                alert("Threshold updated to: " + data.new_light_threshold);
+                document.getElementById("currentLightThreshold").textContent = data.new_light_threshold;
+            }
+        }
+    </script>
+</body>
+</html>

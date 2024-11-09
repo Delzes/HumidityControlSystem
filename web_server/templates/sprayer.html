@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprayer Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Влажность в помещении</a></li>
+            <li><a href="{{ url_for('light') }}">Освещенность</a></li>
+            <li><a href="{{ url_for('sprayer') }}">Влажность в почве</a></li>
+            <li><a href="#">Мониторинг температур</a></li>
+        </ul>
+    </nav>
+
+    <h1>Current Sprayer Level: <span id="currentSprayer">{{ sprayer }}</span>%</h1>
+    <h2>Current Threshold: <span id="currentSprayerThreshold">{{ sprayer_threshold }}</span>%</h2>
+
+
+    <form id="sprayerThresholdForm">
+        <label for="sprayer_threshold">Set Sprayer Threshold:</label>
+        <input type="number" id="sprayer_threshold" name="sprayer_threshold" value="{{ sprayer_threshold }}">
+        <button type="submit">Update Threshold</button>
+    </form>
+
+    <script>
+        async function fetchSprayer() {
+            const response = await fetch('/get_sprayer');
+            const data = await response.json();
+            document.getElementById("currentSprayer").textContent = data.sprayer;
+        }
+
+        setInterval(fetchSprayer, 1000);  // Обновление влажности каждые 5 секунд
+
+        document.getElementById("sprayerThresholdForm").onsubmit = async function(e) {
+            e.preventDefault();
+            const sprayer_threshold = document.getElementById("sprayer_threshold").value;
+
+            const response = await fetch('/update_sprayer_threshold', {
+                method: 'POST',
+                body: new URLSearchParams({ 'sprayer_threshold': sprayer_threshold }),
+            });
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                alert("Threshold updated to: " + data.new_sprayer_threshold);
+                document.getElementById("currentSprayerThreshold").textContent = data.new_sprayer_threshold;
+            }
+        }
+    </script>
+</body>
+</html>

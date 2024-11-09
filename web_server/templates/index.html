@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Humidity Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Влажность в помещении</a></li>
+            <li><a href="{{ url_for('light') }}">Освещенность</a></li>
+            <li><a href="{{ url_for('sprayer') }}">Влажность в почве</a></li>
+            <li><a href="#">Мониторинг температур</a></li>
+        </ul>
+    </nav>
+
     <h1>Current Humidity: <span id="currentHumidity">{{ humidity }}</span>%</h1>
     <h2>Current Threshold: <span id="currentThreshold">{{ threshold }}</span>%</h2>
 
