@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Light Control</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-reboot.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav>
@@ -15,41 +19,43 @@
             <li><a href="#">Мониторинг температур</a></li>
         </ul>
     </nav>
+    <sec class="__container">
+        <div class="title main-title">
+            <h1>Current Light Level: <span id="currentLight">{{ light }}</span> Lux</h1>
+            <h2>Current Threshold: <span id="currentLightThreshold">{{ light_threshold }}</span> Lux</h2>
+        </div>
 
-    <h1>Current Light Level: <span id="currentLight">{{ light }}</span> Lux</h1>
-    <h2>Current Threshold: <span id="currentLightThreshold">{{ light_threshold }}</span> Lux</h2>
+        <form class="text-field" id="lightThresholdForm">
+            <label class="text-field__label" for="light_threshold">Set Light Threshold:</label>
+            <input class="text-field__input" type="number" id="light_threshold" name="light_threshold" value="{{ light_threshold }}">
+            <button class="text-field__button" type="submit">Update Threshold</button>
+        </form>
 
-
-    <form id="lightThresholdForm">
-        <label for="light_threshold">Set Light Threshold:</label>
-        <input type="number" id="light_threshold" name="light_threshold" value="{{ light_threshold }}">
-        <button type="submit">Update Threshold</button>
-    </form>
-
-    <script>
-        async function fetchLight() {
-            const response = await fetch('/get_light');
-            const data = await response.json();
-            document.getElementById("currentLight").textContent = data.light;
-        }
-
-        setInterval(fetchLight, 5000);  // Обновление влажности каждые 5 секунд
-
-        document.getElementById("lightThresholdForm").onsubmit = async function(e) {
-            e.preventDefault();
-            const light_threshold = document.getElementById("light_threshold").value;
-
-            const response = await fetch('/update_light_threshold', {
-                method: 'POST',
-                body: new URLSearchParams({ 'light_threshold': light_threshold }),
-            });
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                alert("Threshold updated to: " + data.new_light_threshold);
-                document.getElementById("currentLightThreshold").textContent = data.new_light_threshold;
+        <script>
+            async function fetchLight() {
+                const response = await fetch('/get_light');
+                const data = await response.json();
+                document.getElementById("currentLight").textContent = data.light;
             }
-        }
-    </script>
+
+            setInterval(fetchLight, 2000);  // Обновление влажности каждые 5 секунд
+
+            document.getElementById("lightThresholdForm").onsubmit = async function(e) {
+                e.preventDefault();
+                const light_threshold = document.getElementById("light_threshold").value;
+
+                const response = await fetch('/update_light_threshold', {
+                    method: 'POST',
+                    body: new URLSearchParams({ 'light_threshold': light_threshold }),
+                });
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    alert("Threshold updated to: " + data.new_light_threshold);
+                    document.getElementById("currentLightThreshold").textContent = data.new_light_threshold;
+                }
+            }
+        </script>
+    </sec>
 </body>
 </html>

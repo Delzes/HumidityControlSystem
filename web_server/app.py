@@ -5,11 +5,12 @@ app = Flask(__name__)
 
 MQTT_BROKER = 'localhost'
 MQTT_PORT = 1883
-MQTT_TOPIC_HUMIDITY = 'home/humidity'
-MQTT_TOPIC_SETTINGS = 'home/settings'
-MQTT_TOPIC_LIGHT = 'home/light'
+
+MQTT_TOPIC_FAN_HUMIDITY = 'home/fan/humidity'
+MQTT_TOPIC_LIGHT_LUX = 'home/light/lux_value'
+MQTT_TOPIC_SPRAYER_HUMIDITY = 'home/sprayer/humidity'
+MQTT_TOPIC_FAN_SETTINGS = 'home/fan/settings'
 MQTT_TOPIC_LIGHT_SETTINGS = 'home/light/settings'
-MQTT_TOPIC_SPRAYER = 'home/sprayer'
 MQTT_TOPIC_SPRAYER_SETTINGS = 'home/sprayer/settings'
 
 current_humidity = 0
@@ -19,18 +20,23 @@ light_threshold = 300
 sprayer_threshold = 50
 current_sprayer = 100
 
+print(humidity_threshold)
+
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
-    client.subscribe([(MQTT_TOPIC_HUMIDITY, 0), (MQTT_TOPIC_LIGHT, 0), (MQTT_TOPIC_SPRAYER, 0)])
+    client.subscribe([(MQTT_TOPIC_FAN_HUMIDITY, 0), (MQTT_TOPIC_LIGHT_LUX, 0), (MQTT_TOPIC_SPRAYER_HUMIDITY, 0)])
+    client.publish(MQTT_TOPIC_FAN_SETTINGS, str(humidity_threshold))
+    client.publish(MQTT_TOPIC_LIGHT_SETTINGS, str(light_threshold))
+    client.publish(MQTT_TOPIC_SPRAYER_SETTINGS, str(sprayer_threshold))
 
 def on_message(client, userdata, msg):
     print(f"Message received: {msg.topic} {msg.payload}")
     global current_humidity, current_light, current_sprayer
-    if msg.topic == MQTT_TOPIC_HUMIDITY:
+    if msg.topic == MQTT_TOPIC_FAN_HUMIDITY:
         current_humidity = int(msg.payload.decode())
-    elif msg.topic == MQTT_TOPIC_LIGHT:
+    elif msg.topic == MQTT_TOPIC_LIGHT_LUX:
         current_light = int(msg.payload.decode())
-    elif msg.topic == MQTT_TOPIC_SPRAYER:
+    elif msg.topic == MQTT_TOPIC_SPRAYER_HUMIDITY:
         current_sprayer = int(msg.payload.decode())
 
 mqtt_client = mqtt.Client()
@@ -55,7 +61,7 @@ def sprayer():
 def update_threshold():
     global humidity_threshold
     humidity_threshold = int(request.form['threshold'])
-    mqtt_client.publish(MQTT_TOPIC_SETTINGS, str(humidity_threshold))
+    mqtt_client.publish(MQTT_TOPIC_FAN_SETTINGS, str(humidity_threshold))
     return jsonify({'status': 'success', 'new_threshold': humidity_threshold})
 
 @app.route('/update_light_threshold', methods=['POST'])
