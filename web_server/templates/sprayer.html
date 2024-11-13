@@ -11,51 +11,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('index') }}">Влажность в помещении</a></li>
-            <li><a href="{{ url_for('light') }}">Освещенность</a></li>
-            <li><a href="{{ url_for('sprayer') }}">Влажность в почве</a></li>
-            <li><a href="#">Мониторинг температур</a></li>
-        </ul>
-    </nav>
-    <sec class="__container">
-        <div class="title main-title">
-            <h1>Current Sprayer Level: <span id="currentSprayer">{{ sprayer }}</span>%</h1>
-            <h2>Current Threshold: <span id="currentSprayerThreshold">{{ sprayer_threshold }}</span>%</h2>
+    <div class="menu">
+        <div class="menu__logo">
+            <img class="logo" src="{{ url_for('static', filename='images/home.svg') }}">
         </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Влажность в помещении</a></li>
+                <li><a href="{{ url_for('light') }}">Освещенность</a></li>
+                <li><a href="{{ url_for('sprayer') }}">Влажность в почве</a></li>
+                <li><a href="#">Мониторинг температур</a></li>
+            </ul>
+        </nav>
+    </div>
+    <sec class="main">
+        <div class="_container">
+            <div id="time">Загрузка времени...</div>
+            <div class="main__content content-main">
+                <div class="content-main__item item-main">
+                    <div class="item-main__header">
+                        <div class="item-main__logo">
+                            <img class="logo" src="{{ url_for('static', filename='images/sensor.png') }}">
+                        </div>
+                        <div class="item-main__title title">
+                            <h1><span>Датчик: </span>датчик влажности в почве</h1>
+                        </div>
+                    </div>
+                    <div class="item-main__content">
+                        <h2>Влажность в почве: <span id="currentSprayer">{{ sprayer }}</span>%</h1>
+                        <h2>Порог срабатывания датчика: <span id="currentSprayerThreshold">{{ sprayer_threshold }}</span>%</h2>
+                    </div>
+                    <form class="text-field" id="sprayerThresholdForm">
+                        <label class="text-field__label" for="sprayer_threshold">Изменить порог срабатывания датчика влажности в почве:</label>
+                        <input class="text-field__input" type="number" id="sprayer_threshold" name="sprayer_threshold" value="{{ sprayer_threshold }}">
+                        <button class="text-field__button" type="submit">Применить</button>
+                    </form>
+                </div>
+                <div class="content-main__item item-main">
 
-        <form class="text-field" id="sprayerThresholdForm">
-            <label class="text-field__label" for="sprayer_threshold">Set Sprayer Threshold:</label>
-            <input class="text-field__input" type="number" id="sprayer_threshold" name="sprayer_threshold" value="{{ sprayer_threshold }}">
-            <button class="text-field__button" type="submit">Update Threshold</button>
-        </form>
-
-        <script>
-            async function fetchSprayer() {
-                const response = await fetch('/get_sprayer');
-                const data = await response.json();
-                document.getElementById("currentSprayer").textContent = data.sprayer;
-            }
-
-            setInterval(fetchSprayer, 2000);  // Обновление влажности каждые 5 секунд
-
-            document.getElementById("sprayerThresholdForm").onsubmit = async function(e) {
-                e.preventDefault();
-                const sprayer_threshold = document.getElementById("sprayer_threshold").value;
-
-                const response = await fetch('/update_sprayer_threshold', {
-                    method: 'POST',
-                    body: new URLSearchParams({ 'sprayer_threshold': sprayer_threshold }),
-                });
-                const data = await response.json();
-
-                if (data.status === 'success') {
-                    alert("Threshold updated to: " + data.new_sprayer_threshold);
-                    document.getElementById("currentSprayerThreshold").textContent = data.new_sprayer_threshold;
-                }
-            }
-        </script>
+                </div>
+            </div>
+        </div>
     </sec>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script-sprayer.js') }}"></script>
 </body>
 </html>

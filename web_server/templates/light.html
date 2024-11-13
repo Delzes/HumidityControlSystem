@@ -11,51 +11,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="{{ url_for('index') }}">Влажность в помещении</a></li>
-            <li><a href="{{ url_for('light') }}">Освещенность</a></li>
-            <li><a href="{{ url_for('sprayer') }}">Влажность в почве</a></li>
-            <li><a href="#">Мониторинг температур</a></li>
-        </ul>
-    </nav>
-    <sec class="__container">
-        <div class="title main-title">
-            <h1>Current Light Level: <span id="currentLight">{{ light }}</span> Lux</h1>
-            <h2>Current Threshold: <span id="currentLightThreshold">{{ light_threshold }}</span> Lux</h2>
+    <div class="menu">
+        <div class="menu__logo">
+            <img class="logo" src="{{ url_for('static', filename='images/home.svg') }}">
         </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Влажность в помещении</a></li>
+                <li><a href="{{ url_for('light') }}">Освещенность</a></li>
+                <li><a href="{{ url_for('sprayer') }}">Влажность в почве</a></li>
+                <li><a href="#">Мониторинг температур</a></li>
+            </ul>
+        </nav>
+    </div>
+    <sec class="main">
+        <div class="_container">
+            <div id="time">Загрузка времени...</div>
+            <div class="main__content content-main">
+                <div class="content-main__item item-main">
+                    <div class="item-main__header">
+                        <div class="item-main__logo">
+                            <img  class="logo"  src="{{ url_for('static', filename='images/sensor.png') }}">
+                        </div>
+                        <div class="item-main__title title">
+                            <h1><span>Датчик: </span>датчик света в помещении</h1>
+                        </div>
+                    </div>
+                    <div class="item-main__content">
+                        <h2>Уровень освещенности: <span id="currentLight">{{ light }}</span> Lux</h2>
+                        <h2>Порог срабатывания датчика: <span id="currentLightThreshold">{{ light_threshold }}</span> Lux</h2>
+                    </div>
+                    <form class="text-field" id="lightThresholdForm">
+                        <label class="text-field__label" for="light_threshold">Изменить порог срабатывания датчика света:</label>
+                        <input class="text-field__input" type="number" id="light_threshold" name="light_threshold" value="{{ light_threshold }}">
+                        <button class="text-field__button" type="submit">Применить</button>
+                    </form>
+                </div>
+                <div class="content-main__item item-main">
 
-        <form class="text-field" id="lightThresholdForm">
-            <label class="text-field__label" for="light_threshold">Set Light Threshold:</label>
-            <input class="text-field__input" type="number" id="light_threshold" name="light_threshold" value="{{ light_threshold }}">
-            <button class="text-field__button" type="submit">Update Threshold</button>
-        </form>
-
-        <script>
-            async function fetchLight() {
-                const response = await fetch('/get_light');
-                const data = await response.json();
-                document.getElementById("currentLight").textContent = data.light;
-            }
-
-            setInterval(fetchLight, 2000);  // Обновление влажности каждые 5 секунд
-
-            document.getElementById("lightThresholdForm").onsubmit = async function(e) {
-                e.preventDefault();
-                const light_threshold = document.getElementById("light_threshold").value;
-
-                const response = await fetch('/update_light_threshold', {
-                    method: 'POST',
-                    body: new URLSearchParams({ 'light_threshold': light_threshold }),
-                });
-                const data = await response.json();
-
-                if (data.status === 'success') {
-                    alert("Threshold updated to: " + data.new_light_threshold);
-                    document.getElementById("currentLightThreshold").textContent = data.new_light_threshold;
-                }
-            }
-        </script>
+                </div>
+            </div>
+        </div>
     </sec>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script-light.js') }}"></script>
 </body>
 </html>
