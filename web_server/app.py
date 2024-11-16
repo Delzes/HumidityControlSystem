@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, jsonify
-import threading
 import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
+
 temperature_history = []
 
 MQTT_BROKER = 'localhost'

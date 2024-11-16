@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 
+
 MQTT_BROKER = 'localhost'
 MQTT_PORT = 1883
 MQTT_TOPIC_FAN = 'home/fan'
@@ -53,7 +54,7 @@ def on_message(client, userdata, msg):
     elif msg.topic == MQTT_TOPIC_SPRAYER_INCREASE:
         decreasing = msg.payload.decode()
     elif msg.topic == MQTT_TOPIC_TEMP_VALUE:
-        current_temperature = int(msg.payload.decode())
+        current_temperature = float(msg.payload.decode())
     elif msg.topic == MQTT_TOPIC_TEMP_SETTINGS_MIN:
         temperature_threshold_min = int(msg.payload.decode())
         print(f"New min value: {temperature_threshold_min}")

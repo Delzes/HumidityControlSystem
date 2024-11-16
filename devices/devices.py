@@ -26,6 +26,7 @@ def on_message(client, userdata, msg):
         elif msg.payload.decode() == 'OFF':
             print("Sprayer is OFF")
 
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message

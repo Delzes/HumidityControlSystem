@@ -107,7 +107,7 @@ async function updateTemperatureChart() {
 
 let temperature_threshold_min = document.getElementById("temperature_threshold_min").value;
 let temperature_threshold_max = document.getElementById("temperature_threshold_max").value;
-const addedRecords = new Set();
+const addedRecords = JSON.parse(localStorage.getItem('addedRecords')) || [];
 
 function updateTemperatureTable(temperature, timestamp) {
     const tableBody = document.getElementById('temperatureTable').querySelector('tbody');
@@ -117,15 +117,17 @@ function updateTemperatureTable(temperature, timestamp) {
     const time = dateObj.toLocaleTimeString(); // Формат: ЧЧ:ММ:СС
 
     const roundedTemp = temperature.toFixed(1);
-    const recordKey = `${roundedTemp}_${dateObj.getTime()}`;
-    if (addedRecords.has(recordKey)) return;
-    addedRecords.add(recordKey);
+    if (addedRecords.some(record => record.temperature === roundedTemp && record.timestamp === timestamp)) {
+        return;
+    }
+    addedRecords.push({ temperature: roundedTemp, timestamp });
+    localStorage.setItem('addedRecords', JSON.stringify(addedRecords));
 
     const row = `
         <tr>
             <td>${date}</td>
             <td>${time}</td>
-            <td>${temperature.toFixed(2)}°C</td>
+            <td>${roundedTemp}°C</td>
         </tr>
     `;
 
@@ -142,6 +144,34 @@ async function checkTemperatureThresholds() {
         updateTemperatureTable(currentTemperature, timestamp);
     }
 }
+
+function loadSavedData() {
+    const tableBody = document.getElementById('temperatureTable').querySelector('tbody');
+    addedRecords.forEach(record => {
+        const dateObj = new Date(record.timestamp);
+        const date = dateObj.toLocaleDateString();
+        const time = dateObj.toLocaleTimeString();
+        const row = `
+            <tr>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${record.temperature}°C</td>
+            </tr>
+        `;
+        tableBody.insertAdjacentHTML('beforeend', row);
+    });
+}
+
+const clearStorageButton = document.getElementById('clearStorageButton');
+
+clearStorageButton.addEventListener('click', () => {
+    localStorage.clear();
+    const tableBody = document.getElementById('temperatureTable').querySelector('tbody');
+    tableBody.innerHTML = '';
+    addedRecords.length = 0;
+});
+
 setInterval(fetchTemperature, 4000);
 setInterval(updateTemperatureChart, 3000);
 setInterval(checkTemperatureThresholds, 5000);
+window.onload = loadSavedData;
