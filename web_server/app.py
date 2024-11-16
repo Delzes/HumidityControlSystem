@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, jsonify
+import threading
 import paho.mqtt.client as mqtt
 
 app = Flask(__name__)
+temperature_history = []
 
 MQTT_BROKER = 'localhost'
 MQTT_PORT = 1883
@@ -46,6 +48,10 @@ def on_message(client, userdata, msg):
         current_sprayer = int(msg.payload.decode())
     elif msg.topic == MQTT_TOPIC_TEMP_VALUE:
         current_temperature = round(float(msg.payload.decode()), 2)
+        temperature_history.append(current_temperature)
+        if len(temperature_history) > 50:
+            temperature_history.pop(0)
+
 
 
 mqtt_client = mqtt.Client()
@@ -120,6 +126,10 @@ def get_sprayer():
 @app.route('/get_temperature', methods=['GET'])
 def get_temperature():
     return jsonify({'temperature': current_temperature})
+
+@app.route('/temperature/history')
+def temperaturehistory_api():
+    return jsonify(temperature_history)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

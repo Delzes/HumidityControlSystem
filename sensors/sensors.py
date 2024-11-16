@@ -76,8 +76,6 @@ while True:
     current_temperature = base_temperature + amplitude * math.sin(2 * math.pi * (time_counter / period))
     current_temperature += (randint(-10, 10))/10
 
-    client.publish(MQTT_TOPIC_TEMP_AMPLITUDE, amplitude)
-    client.publish(MQTT_TOPIC_TEMP_BASE, base_temperature)
     client.publish(MQTT_TOPIC_TEMP_VALUE, current_temperature)
     client.publish(MQTT_TOPIC_SPRAYER_HUMIDITY, current_sprayer)
     client.publish(MQTT_TOPIC_SPRAYER_INCREASE, decreasing)

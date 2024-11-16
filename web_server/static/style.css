@@ -61,6 +61,7 @@ nav ul li a:hover {
     display: flex;
     justify-content: space-between;
 }
+
 .item-main__header {
     display: flex;
     justify-content: space-between;
@@ -99,6 +100,47 @@ nav ul li a:hover {
 }
 .item-main__title {
 }
+
+.bell-main__item {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    min-width: 500px;
+    min-height: 100px;
+    padding: 50px 70px;
+
+    border: 1px solid rgba(14, 67, 195, 1);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(15px);
+    width: 100%;
+}
+
+.bell-main__item h2 {
+    margin-bottom: 20px;
+}
+
+tbody {
+    overflow-y: auto;
+    width: 100%;
+}
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+thead {
+    background-color: #f0f0f0;
+}
+
 h1 span {
     color: #0e43c3;
     font-weight: bold;
@@ -177,4 +219,14 @@ h2 span {
     border-color: #eee;
     color: #444;
     cursor: not-allowed;
+}
+
+.indicator {
+    margin: 20px auto; width: 300px; height: 30px; background: #ddd; border-radius: 15px; position: relative;
+}
+.indicator .level {
+    height: 100%; background: #4caf50; border-radius: 15px; transition: width 0.3s;
+}
+.history {
+    margin-top: 20px; max-width: 400px; margin-left: auto; margin-right: auto; text-align: left;
 }

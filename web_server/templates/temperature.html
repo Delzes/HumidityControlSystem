@@ -42,23 +42,40 @@
                         <h2>Порог срабатывания датчика (минимальный): <span id="currentTemperatureThresholdMin">{{ temperature_threshold_min }}</span>°C</h2>
                         <h2>Порог срабатывания датчика (максимальный): <span id="currentTemperatureThresholdMax">{{ temperature_threshold_max }}</span>°C</h2>
                     </div>
-                    <form class="text-field" id="temperatureThresholdFormMin" onsubmit="return validateThresholds()">
+                    <form class="text-field" id="temperatureThresholdFormMin">
                         <label class="text-field__label" for="temperature_threshold_min">Изменить порог срабатывания датчика температуры (мин):</label>
-                        <input class="text-field__input" type="number" id="temperature_threshold_min" name="temperature_threshold_min" value="{{ temperature_threshold_min }}">
+                        <input class="text-field__input" type="number" id="temperature_threshold_min" name="temperature_threshold_min" value="{{ temperature_threshold_min }}" oninput="validateThresholds()">
                         <button class="text-field__button" type="submit">Применить</button>
                     </form>
-                    <form class="text-field" id="temperatureThresholdFormMax" onsubmit="return validateThresholds()">
+                    <form class="text-field" id="temperatureThresholdFormMax">
                         <label class="text-field__label" for="temperature_threshold_max">Изменить порог срабатывания датчика температуры (макс):</label>
-                        <input class="text-field__input" type="number" id="temperature_threshold_max" name="temperature_threshold_max" value="{{ temperature_threshold_max }}">
+                        <input class="text-field__input" type="number" id="temperature_threshold_max" name="temperature_threshold_max" value="{{ temperature_threshold_max }}" oninput="validateThresholds()">
                         <button class="text-field__button" type="submit">Применить</button>
                     </form>
                 </div>
                 <div class="content-main__item item-main">
+                    <h1>Мониторинг температур</h1>
+                    <h2>График температур</h2>
+                    <canvas id="temperatureChart" width="400" height="200"></canvas>
                 </div>
+            </div>
+            <div class="bell-main__item">
+                    <h2>Уведомление</h2>
+                    <table id="temperatureTable">
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Температура (°C)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
             </div>
         </div>
     </sec>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='script-temperature.js') }}"></script>
 </body>
 </html>

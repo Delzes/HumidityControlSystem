@@ -3,9 +3,6 @@ async function fetchTemperature() {
     const data = await response.json();
     document.getElementById("currentTemperature").textContent = data.temperature;
 }
-
-setInterval(fetchTemperature, 2000);  // Обновление влажности каждые 5 секунд
-
 document.getElementById("temperatureThresholdFormMin").onsubmit = async function(e) {
     e.preventDefault();
     const temperature_threshold_min = document.getElementById("temperature_threshold_min").value;
@@ -43,13 +40,108 @@ function validateThresholds() {
     const maxInput = document.getElementById('temperature_threshold_max');
     const min = parseFloat(minInput.value);
     const max = parseFloat(maxInput.value);
-    if (isNaN(min) || isNaN(max)) {
-        alert("Оба значения должны быть числами!");
-        return false;
-    }
     if (min > max) {
-        alert("Минимальное значение не может быть больше максимального!");
-        return false;
+        minInput.setCustomValidity("Минимальное значение не может быть больше максимального!");
+        maxInput.setCustomValidity("Максимальное значение не может быть меньше минимального!");
+    } else {
+        minInput.setCustomValidity("");
+        maxInput.setCustomValidity("");
     }
-    return true;
 }
+
+let temperatureData = [];
+
+const ctx = document.getElementById('temperatureChart').getContext('2d');
+const temperatureChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        datasets: [{
+            label: 'Температура (°C)',
+            data: [],
+            backgroundColor: 'rgba(75, 192, 192, 1)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            pointRadius: 5,
+        }]
+    },
+    options: {
+        scales: {
+            x: {
+                type: 'linear',
+                position: 'bottom',
+                title: {
+                    display: true,
+                    text: 'Время (секунды)'
+                },
+                ticks: {
+                    callback: function(value) {
+                        const date = new Date(value);
+                        return date.toLocaleTimeString();
+                    }
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Температура (°C)'
+                }
+            }
+        }
+    }
+});
+
+
+async function updateTemperatureChart() {
+    const response = await fetch('/temperature/history');
+    const history = await response.json();
+
+    const now = Date.now();
+    temperatureData = history.map((temp, index) => ({
+        x: now - (history.length - 1 - index) * 5000,
+        y: temp,
+    }));
+    temperatureChart.data.datasets[0].data = temperatureData;
+    temperatureChart.update();
+}
+
+
+
+let temperature_threshold_min = document.getElementById("temperature_threshold_min").value;
+let temperature_threshold_max = document.getElementById("temperature_threshold_max").value;
+const addedRecords = new Set();
+
+function updateTemperatureTable(temperature, timestamp) {
+    const tableBody = document.getElementById('temperatureTable').querySelector('tbody');
+
+    const dateObj = new Date(timestamp);
+    const date = dateObj.toLocaleDateString(); // Формат: ДД.ММ.ГГГГ
+    const time = dateObj.toLocaleTimeString(); // Формат: ЧЧ:ММ:СС
+
+    const roundedTemp = temperature.toFixed(1);
+    const recordKey = `${roundedTemp}_${dateObj.getTime()}`;
+    if (addedRecords.has(recordKey)) return;
+    addedRecords.add(recordKey);
+
+    const row = `
+        <tr>
+            <td>${date}</td>
+            <td>${time}</td>
+            <td>${temperature.toFixed(2)}°C</td>
+        </tr>
+    `;
+
+    tableBody.insertAdjacentHTML('beforeend', row);
+}
+
+async function checkTemperatureThresholds() {
+    const response = await fetch('/get_temperature');
+    const data = await response.json();
+    const currentTemperature = data.temperature;
+
+    const timestamp = Date.now();
+    if (currentTemperature > temperature_threshold_max || currentTemperature < temperature_threshold_min) {
+        updateTemperatureTable(currentTemperature, timestamp);
+    }
+}
+setInterval(fetchTemperature, 4000);
+setInterval(updateTemperatureChart, 3000);
+setInterval(checkTemperatureThresholds, 5000);
