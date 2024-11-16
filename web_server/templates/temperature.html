@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Humidity Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Control</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-reboot.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,26 +34,31 @@
                             <img class="logo" src="{{ url_for('static', filename='images/sensor.png') }}">
                         </div>
                         <div class="item-main__title title">
-                            <h1><span>Датчик: </span>датчик влажности в помещении</h1>
+                            <h1><span>Датчик: </span>датчик температуры</h1>
                         </div>
                     </div>
                     <div class="item-main__content">
-                        <h2>Влажность в помещении: <span id="currentHumidity">{{ humidity }}</span>%</h2>
-                        <h2>Порог срабатывания датчика: <span id="currentThreshold">{{ threshold }}</span>%</h2>
+                        <h2>Текущее значение температуры: <span id="currentTemperature">{{ temperature }}</span>°C</h2>
+                        <h2>Порог срабатывания датчика (минимальный): <span id="currentTemperatureThresholdMin">{{ temperature_threshold_min }}</span>°C</h2>
+                        <h2>Порог срабатывания датчика (максимальный): <span id="currentTemperatureThresholdMax">{{ temperature_threshold_max }}</span>°C</h2>
                     </div>
-                    <form id="thresholdForm" class="text-field">
-                        <label class="text-field__label" for="threshold">Изменить порог срабатывания датчика влажности в помещении:</label>
-                        <input class="text-field__input" type="number" id="threshold" name="threshold" value="{{ threshold }}">
+                    <form class="text-field" id="temperatureThresholdFormMin" onsubmit="return validateThresholds()">
+                        <label class="text-field__label" for="temperature_threshold_min">Изменить порог срабатывания датчика температуры (мин):</label>
+                        <input class="text-field__input" type="number" id="temperature_threshold_min" name="temperature_threshold_min" value="{{ temperature_threshold_min }}">
+                        <button class="text-field__button" type="submit">Применить</button>
+                    </form>
+                    <form class="text-field" id="temperatureThresholdFormMax" onsubmit="return validateThresholds()">
+                        <label class="text-field__label" for="temperature_threshold_max">Изменить порог срабатывания датчика температуры (макс):</label>
+                        <input class="text-field__input" type="number" id="temperature_threshold_max" name="temperature_threshold_max" value="{{ temperature_threshold_max }}">
                         <button class="text-field__button" type="submit">Применить</button>
                     </form>
                 </div>
                 <div class="content-main__item item-main">
-
                 </div>
             </div>
         </div>
     </sec>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script src="{{ url_for('static', filename='script-index.js') }}"></script>
+    <script src="{{ url_for('static', filename='script-temperature.js') }}"></script>
 </body>
 </html>

@@ -3,9 +3,10 @@ import paho.mqtt.client as mqtt
 MQTT_TOPIC_FAN = 'home/fan'
 MQTT_TOPIC_LIGHT = 'home/light'
 MQTT_TOPIC_SPRAYER = 'home/sprayer'
+MQTT_TOPIC_TEMP = 'home/temperature'
 
 def on_connect(client, userdata, flags, rc):
-    client.subscribe([(MQTT_TOPIC_LIGHT, 0), (MQTT_TOPIC_SPRAYER, 0), (MQTT_TOPIC_FAN, 0)])
+    client.subscribe([(MQTT_TOPIC_LIGHT, 0), (MQTT_TOPIC_SPRAYER, 0), (MQTT_TOPIC_FAN, 0), (MQTT_TOPIC_TEMP, 0)])
 
 
 def on_message(client, userdata, msg):

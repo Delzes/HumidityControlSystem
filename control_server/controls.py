@@ -13,7 +13,8 @@ MQTT_TOPIC_TEMP_VALUE = 'home/temperature/temperature_value'
 MQTT_TOPIC_FAN_SETTINGS = 'home/fan/settings'
 MQTT_TOPIC_LIGHT_SETTINGS = 'home/light/settings'
 MQTT_TOPIC_SPRAYER_SETTINGS = 'home/sprayer/settings'
-MQTT_TOPIC_TEMP_SETTINGS = 'home/temperature/settings'
+MQTT_TOPIC_TEMP_SETTINGS_MAX = 'home/temperature/settings/max_temperature'
+MQTT_TOPIC_TEMP_SETTINGS_MIN = 'home/temperature/settings/min_temperature'
 MQTT_TOPIC_SPRAYER_INCREASE = 'home/sprayer/increase'
 
 humidity_threshold = 60
@@ -28,10 +29,10 @@ current_temperature = 20
 decreasing = True
 
 def on_connect(client, userdata, flags, rc):
-    client.subscribe([(MQTT_TOPIC_FAN_HUMIDITY, 0), (MQTT_TOPIC_FAN_SETTINGS, 0),(MQTT_TOPIC_LIGHT_LUX, 0), (MQTT_TOPIC_LIGHT_SETTINGS, 0), (MQTT_TOPIC_SPRAYER_HUMIDITY, 0), (MQTT_TOPIC_SPRAYER_SETTINGS, 0), (MQTT_TOPIC_SPRAYER_INCREASE, 0), (MQTT_TOPIC_TEMP_VALUE, 0), (MQTT_TOPIC_TEMP_SETTINGS, 0)])
+    client.subscribe([(MQTT_TOPIC_FAN_HUMIDITY, 0), (MQTT_TOPIC_FAN_SETTINGS, 0),(MQTT_TOPIC_LIGHT_LUX, 0), (MQTT_TOPIC_LIGHT_SETTINGS, 0), (MQTT_TOPIC_SPRAYER_HUMIDITY, 0), (MQTT_TOPIC_SPRAYER_SETTINGS, 0), (MQTT_TOPIC_SPRAYER_INCREASE, 0), (MQTT_TOPIC_TEMP_VALUE, 0), (MQTT_TOPIC_TEMP_SETTINGS_MAX, 0), (MQTT_TOPIC_TEMP_SETTINGS_MIN, 0)])
 
 def on_message(client, userdata, msg):
-    global current_humidity, humidity_threshold, current_light, light_threshold, current_sprayer, sprayer_threshold, current_temperature,decreasing
+    global current_humidity, humidity_threshold, current_light, light_threshold, current_sprayer, sprayer_threshold, current_temperature, temperature_threshold_max, temperature_threshold_min, decreasing
     if msg.topic == MQTT_TOPIC_FAN_HUMIDITY:
         current_humidity = int(msg.payload.decode())
         control_fan()
@@ -51,6 +52,14 @@ def on_message(client, userdata, msg):
         print(f"New sprayer threshold: {sprayer_threshold}")
     elif msg.topic == MQTT_TOPIC_SPRAYER_INCREASE:
         decreasing = msg.payload.decode()
+    elif msg.topic == MQTT_TOPIC_TEMP_VALUE:
+        current_temperature = int(msg.payload.decode())
+    elif msg.topic == MQTT_TOPIC_TEMP_SETTINGS_MIN:
+        temperature_threshold_min = int(msg.payload.decode())
+        print(f"New min value: {temperature_threshold_min}")
+    elif msg.topic == MQTT_TOPIC_TEMP_SETTINGS_MAX:
+        temperature_threshold_max = int(msg.payload.decode())
+        print(f"New min value: {temperature_threshold_max}")
 
 
 def control_fan():

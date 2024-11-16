@@ -20,7 +20,7 @@
                 <li><a href="{{ url_for('index') }}">Влажность в помещении</a></li>
                 <li><a href="{{ url_for('light') }}">Освещенность</a></li>
                 <li><a href="{{ url_for('sprayer') }}">Влажность в почве</a></li>
-                <li><a href="#">Мониторинг температур</a></li>
+                <li><a href="{{ url_for('temperature') }}">Мониторинг температур</a></li>
             </ul>
         </nav>
     </div>
@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div class="item-main__content">
-                        <h2>Влажность в почве: <span id="currentSprayer">{{ sprayer }}</span>%</h1>
+                        <h2>Влажность в почве: <span id="currentSprayer">{{ sprayer }}</span>%</h2>
                         <h2>Порог срабатывания датчика: <span id="currentSprayerThreshold">{{ sprayer_threshold }}</span>%</h2>
                     </div>
                     <form class="text-field" id="sprayerThresholdForm">
