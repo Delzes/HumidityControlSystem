@@ -58,8 +58,8 @@ const temperatureChart = new Chart(ctx, {
         datasets: [{
             label: 'Температура (°C)',
             data: [],
-            backgroundColor: 'rgba(75, 192, 192, 1)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgb(14,67,195)',
+            borderColor: 'rgb(14,67,195)',
             pointRadius: 5,
         }]
     },

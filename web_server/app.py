@@ -8,6 +8,9 @@ temperature_history = []
 MQTT_BROKER = 'localhost'
 MQTT_PORT = 1883
 
+MQTT_TOPIC_FAN = 'home/fan'
+MQTT_TOPIC_LIGHT = 'home/light'
+MQTT_TOPIC_SPRAYER = 'home/sprayer'
 MQTT_TOPIC_FAN_HUMIDITY = 'home/fan/humidity'
 MQTT_TOPIC_LIGHT_LUX = 'home/light/lux_value'
 MQTT_TOPIC_SPRAYER_HUMIDITY = 'home/sprayer/humidity'
@@ -17,6 +20,7 @@ MQTT_TOPIC_LIGHT_SETTINGS = 'home/light/settings'
 MQTT_TOPIC_SPRAYER_SETTINGS = 'home/sprayer/settings'
 MQTT_TOPIC_TEMP_SETTINGS_MAX = 'home/temperature/settings/max_temperature'
 MQTT_TOPIC_TEMP_SETTINGS_MIN = 'home/temperature/settings/min_temperature'
+
 
 current_humidity = 0
 humidity_threshold = 60
@@ -30,7 +34,7 @@ current_temperature = 20
 
 def on_connect(client, userdata, flags, rc):
     print(f"Connected with result code {rc}")
-    client.subscribe([(MQTT_TOPIC_FAN_HUMIDITY, 0), (MQTT_TOPIC_LIGHT_LUX, 0), (MQTT_TOPIC_SPRAYER_HUMIDITY, 0), (MQTT_TOPIC_TEMP_VALUE, 0)])
+    client.subscribe([(MQTT_TOPIC_FAN_HUMIDITY, 0), (MQTT_TOPIC_LIGHT_LUX, 0), (MQTT_TOPIC_SPRAYER_HUMIDITY, 0), (MQTT_TOPIC_TEMP_VALUE, 0), (MQTT_TOPIC_LIGHT, 0), (MQTT_TOPIC_SPRAYER, 0), (MQTT_TOPIC_FAN, 0)])
     client.publish(MQTT_TOPIC_FAN_SETTINGS, str(humidity_threshold))
     client.publish(MQTT_TOPIC_LIGHT_SETTINGS, str(light_threshold))
     client.publish(MQTT_TOPIC_SPRAYER_SETTINGS, str(sprayer_threshold))
@@ -39,7 +43,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     print(f"Message received: {msg.topic} {msg.payload}")
-    global current_humidity, current_light, current_sprayer, current_temperature
+    global current_humidity, current_light, current_sprayer, current_temperature, fan_status, light_status, sprayer_status
     if msg.topic == MQTT_TOPIC_FAN_HUMIDITY:
         current_humidity = int(msg.payload.decode())
     elif msg.topic == MQTT_TOPIC_LIGHT_LUX:
@@ -51,6 +55,12 @@ def on_message(client, userdata, msg):
         temperature_history.append(current_temperature)
         if len(temperature_history) > 50:
             temperature_history.pop(0)
+    elif msg.topic == MQTT_TOPIC_FAN:
+        fan_status = str(msg.payload.decode())
+    elif msg.topic == MQTT_TOPIC_LIGHT:
+        light_status = str(msg.payload.decode())
+    elif msg.topic == MQTT_TOPIC_SPRAYER:
+        sprayer_status = str(msg.payload.decode())
 
 
 
@@ -66,7 +76,7 @@ def index():
 
 @app.route('/light')
 def light():
-    return render_template('light.html', light_level=current_light, light_threshold=light_threshold)
+    return render_template('light.html', light=current_light, light_threshold=light_threshold)
 
 @app.route('/sprayer')
 def sprayer():
@@ -130,6 +140,18 @@ def get_temperature():
 @app.route('/temperature/history')
 def temperaturehistory_api():
     return jsonify(temperature_history)
+
+@app.route('/get_fan_status', methods=['GET'])
+def get_fan_status():
+    return jsonify({'fanStatus': fan_status})
+
+@app.route('/get_light_status', methods=['GET'])
+def get_light_status():
+    return jsonify({'lightStatus': light_status})
+
+@app.route('/get_sprayer_status', methods=['GET'])
+def get_sprayer_status():
+    return jsonify({'sprayerStatus': sprayer_status})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -1,16 +1,21 @@
+html {
+    height: 100%;
+}
 body {
     font-family: "Roboto", sans-serif;
     font-weight: 400;
     font-size: 14pt;
-    height: 100%;
+    min-height: 100%;
     line-height: 1;
+    display: flex;
+    flex-direction: column;
+}
+.main {
+    flex: 1
 }
 .logo {
-    width: 60px;
-    height: 60px;
-}
-.menu__logo img {
-    filter: invert(100%);
+    width: 40px;
+    height: 40px;
 }
 .menu {
     display: flex;
@@ -56,6 +61,17 @@ nav ul li a:hover {
 }
 #time {
     margin-bottom: 50px;
+}
+
+.logo-device {
+    width: 260px;
+    height: 260px;
+}
+.item-devices {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-items: center;
 }
 .content-main {
     display: flex;
@@ -148,6 +164,13 @@ h1 span {
 h2 span {
     color: #0e43c3;
     font-weight: bold;
+}
+
+.status_on {
+    color: #118c4e;
+}
+.status_off {
+    color: #c30e0e;
 }
 .text-field {
     margin-top: 20px;
@@ -246,7 +269,7 @@ h2 span {
   width: 72px;
   height: 38px;
   border-radius: 19px;
-  background: #bfbfbf;
+  background: #c30e0e;
   z-index: 0;
   margin: 0;
   padding: 0;
@@ -272,4 +295,43 @@ h2 span {
 }
 .switch-on::after {
   left: 37px;
+}
+
+.footer {
+    background: #0e43c3;
+}
+
+.main-footer {
+    min-height: 120px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+}
+
+.main-footer__item p {
+    font-size: 12pt;
+    color: #789fff;
+}
+
+.main-footer__title {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.main-footer__name:not(:last-child) {
+    margin-bottom: 6px;
+}
+.main-footer__item a {
+    font-size: 12pt;
+    color: #789fff;
+    text-decoration: none;
+}
+.main-footer__item a:hover {
+    color: #bcd0ff;
+    text-decoration: underline;
+}
+
+p {
+    margin: 0;
 }

@@ -27,7 +27,6 @@ current_sprayer = 100
 temperature_threshold_max = 30
 temperature_threshold_min = 10
 current_temperature = 20
-decreasing = True
 
 def on_connect(client, userdata, flags, rc):
     client.subscribe([(MQTT_TOPIC_FAN_HUMIDITY, 0), (MQTT_TOPIC_FAN_SETTINGS, 0),(MQTT_TOPIC_LIGHT_LUX, 0), (MQTT_TOPIC_LIGHT_SETTINGS, 0), (MQTT_TOPIC_SPRAYER_HUMIDITY, 0), (MQTT_TOPIC_SPRAYER_SETTINGS, 0), (MQTT_TOPIC_SPRAYER_INCREASE, 0), (MQTT_TOPIC_TEMP_VALUE, 0), (MQTT_TOPIC_TEMP_SETTINGS_MAX, 0), (MQTT_TOPIC_TEMP_SETTINGS_MIN, 0)])
@@ -47,12 +46,12 @@ def on_message(client, userdata, msg):
         print(f"New light threshold: {light_threshold}")
     elif msg.topic == MQTT_TOPIC_SPRAYER_HUMIDITY:
         current_sprayer = int(msg.payload.decode())
-        control_sprayer()
     elif msg.topic == MQTT_TOPIC_SPRAYER_SETTINGS:
         sprayer_threshold = int(msg.payload.decode())
         print(f"New sprayer threshold: {sprayer_threshold}")
     elif msg.topic == MQTT_TOPIC_SPRAYER_INCREASE:
         decreasing = msg.payload.decode()
+        control_sprayer()
     elif msg.topic == MQTT_TOPIC_TEMP_VALUE:
         current_temperature = float(msg.payload.decode())
     elif msg.topic == MQTT_TOPIC_TEMP_SETTINGS_MIN:
@@ -76,7 +75,7 @@ def control_light():
         client.publish(MQTT_TOPIC_LIGHT, 'OFF')
 
 def control_sprayer():
-    if decreasing:
+    if decreasing == "True":
         client.publish(MQTT_TOPIC_SPRAYER, 'OFF')
     else:
         client.publish(MQTT_TOPIC_SPRAYER, 'ON')

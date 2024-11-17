@@ -4,7 +4,24 @@ async function fetchHumidity() {
     document.getElementById("currentHumidity").textContent = data.humidity;
 }
 
-setInterval(fetchHumidity, 2000);  // Обновление влажности каждые 5 секунд
+async function GetFanStatus() {
+    const response = await fetch('/get_fan_status');
+    const data = await response.json();
+    const statusElement = document.getElementById("statusFan");
+    const statusBtn = document.getElementById("fanStatusBtn");
+    statusElement.textContent = data.fanStatus;
+    statusElement.classList.remove("status_off", "status_on");
+        if (data.fanStatus === "OFF") {
+            statusElement.classList.add("status_off");
+            statusBtn.classList.remove("switch-on");
+        } else if (data.fanStatus === "ON") {
+            statusElement.classList.add("status_on");
+            statusBtn.classList.add("switch-on");
+        }
+}
+
+setInterval(fetchHumidity, 2000);
+setInterval(GetFanStatus, 2100);
 
 document.getElementById("thresholdForm").onsubmit = async function(e) {
     e.preventDefault();

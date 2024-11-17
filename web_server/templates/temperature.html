@@ -13,7 +13,7 @@
 <body>
     <div class="menu">
         <div class="menu__logo">
-            <img class="logo" src="{{ url_for('static', filename='images/home.svg') }}">
+            <img class="logo" src="{{ url_for('static', filename='images/home.png') }}">
         </div>
         <nav>
             <ul>
@@ -65,18 +65,40 @@
                         <button id="clearStorageButton" class="text-field__button">Очистить таблицу</button>
                     </div>
                     <table id="temperatureTable">
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Время</th>
-                            <th>Температура (°C)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Время</th>
+                                <th>Температура (°C)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
             </div>
         </div>
     </sec>
+    <footer class="footer">
+        <div class="footer__main main-footer">
+            <div class="main-footer__column main-footer__column">
+                <div class="main-footer__item">
+                    <p class="main-footer__title">Проект "Умный дом"</p>
+                </div>
+                <div class="main-footer__item">
+                    <a class="main-footer__link" href="https://example.com">GitHub</a>
+                </div>
+            </div>
+            <div class="main-footer__column">
+                <div class="main-footer__item">
+                    <p class="main-footer__title">Выполнили:</p>
+                </div>
+                <div class="main-footer__item">
+                    <p class="main-footer__name">Борисенко Антон Дмитриевич</p>
+                    <p class="main-footer__name">Табатчиков Владислав Сергеевич</p>
+                </div>
+            </div>
+        </div>
+    </footer>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='script-temperature.js') }}"></script>

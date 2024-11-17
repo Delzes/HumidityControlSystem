@@ -4,7 +4,24 @@ async function fetchSprayer() {
     document.getElementById("currentSprayer").textContent = data.sprayer;
 }
 
-setInterval(fetchSprayer, 2000);  // Обновление влажности каждые 5 секунд
+async function GetSprayerStatus() {
+    const response = await fetch('/get_sprayer_status');
+    const data = await response.json();
+    const statusElement = document.getElementById("statusSprayer");
+    const statusBtn = document.getElementById("sprayerStatusBtn");
+    statusElement.textContent = data.sprayerStatus;
+    statusElement.classList.remove("status_off", "status_on");
+        if (data.sprayerStatus === "OFF") {
+            statusElement.classList.add("status_off");
+            statusBtn.classList.remove("switch-on");
+        } else if (data.sprayerStatus === "ON") {
+            statusElement.classList.add("status_on");
+            statusBtn.classList.add("switch-on");
+        }
+}
+
+setInterval(fetchSprayer, 2000);
+setInterval(GetSprayerStatus, 2100);
 
 document.getElementById("sprayerThresholdForm").onsubmit = async function(e) {
     e.preventDefault();

@@ -79,6 +79,5 @@ while True:
     client.publish(MQTT_TOPIC_TEMP_VALUE, current_temperature)
     client.publish(MQTT_TOPIC_SPRAYER_HUMIDITY, current_sprayer)
     client.publish(MQTT_TOPIC_SPRAYER_INCREASE, decreasing)
-    print(f"Current sprayer: {current_sprayer}%")
     time.sleep(5)
     time_counter += step

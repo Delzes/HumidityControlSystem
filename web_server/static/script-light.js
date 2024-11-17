@@ -4,7 +4,24 @@ async function fetchLight() {
     document.getElementById("currentLight").textContent = data.light;
 }
 
-setInterval(fetchLight, 2000);  // Обновление влажности каждые 5 секунд
+async function GetLightStatus() {
+    const response = await fetch('/get_light_status');
+    const data = await response.json();
+    const statusElement = document.getElementById("statusLight");
+    const statusBtn = document.getElementById("lightStatusBtn");
+    statusElement.textContent = data.lightStatus;
+    statusElement.classList.remove("status_off", "status_on");
+        if (data.lightStatus === "OFF") {
+            statusElement.classList.add("status_off");
+            statusBtn.classList.remove("switch-on");
+        } else if (data.lightStatus === "ON") {
+            statusElement.classList.add("status_on");
+            statusBtn.classList.add("switch-on");
+        }
+}
+
+setInterval(fetchLight, 2000);
+setInterval(GetLightStatus, 2100);
 
 document.getElementById("lightThresholdForm").onsubmit = async function(e) {
     e.preventDefault();
